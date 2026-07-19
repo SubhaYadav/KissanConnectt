@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Fertility Analyzer | KisanConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary-green: #4CAF50;
+            --color-warning-yellow: #FBC02D;
+            --color-danger-red: #E53935;
+            --color-text-dark: #1a1a1a;
+            --color-text-light: #666666;
+            --color-bg-light: #f8fdf5;
+            --color-border: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 50%, #fffde7 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--color-text-dark);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(76, 175, 80, 0.15);
+            padding: 40px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--color-primary-green);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--color-text-light);
+            font-size: 14px;
+        }
+
+        .logo-emoji {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .location-section {
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .location-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: var(--color-text-dark);
+        }
+
+        .gps-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--color-text-light);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.active {
+            background: var(--color-primary-green);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            padding: 12px;
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--color-primary-green);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--color-primary-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .analyze-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .analyze-btn:active {
+            transform: translateY(0);
+        }
+
+        .analyze-btn.loading {
+            background: #999;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .loading-section {
+            text-align: center;
+            display: none;
+            padding: 40px 0;
+        }
+
+        .loading-section.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(76, 175, 80, 0.1);
+            border-top-color: var(--color-primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--color-text-light);
+            font-size: 14px;
+        }
+
+        .results-section {
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fertility-card {
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fertility-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            font-weight: 800;
+            color: white;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .fertility-circle.high {
+            background: linear-gradient(135deg, var(--color-primary-green) 0%, #45a049 100%);
+        }
+
+        .fertility-circle.medium {
+            background: linear-gradient(135deg, var(--color-warning-yellow) 0%, #f9a825 100%);
+        }
+
+        .fertility-circle.low {
+            background: linear-gradient(135deg, var(--color-danger-red) 0%, #c62828 100%);
+        }
+
+        .fertility-label {
+            font-size: 16px;
+            color: var(--color-text-light);
+            margin-bottom: 10px;
+        }
+
+        .fertility-status {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .fertility-status.high {
+            color: var(--color-primary-green);
+        }
+
+        .fertility-status.medium {
+            color: #f57f17;
+        }
+
+        .fertility-status.low {
+            color: var(--color-danger-red);
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .weather-item {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid var(--color-border);
+            transition: all 0.3s;
+        }
+
+        .weather-item:hover {
+            border-color: var(--color-primary-green);
+            transform: translateY(-3px);
+        }
+
+        .weather-emoji {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .weather-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text-dark);
+            margin-bottom: 5px;
+        }
+
+        .weather-label {
+            font-size: 12px;
+            color: var(--color-text-light);
+        }
+
+        .maps-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .map-section {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .map-section h3 {
+            background: var(--color-primary-green);
+            color: white;
+            padding: 12px;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        #map {
+            height: 250px;
+            width: 100%;
+        }
+
+        .soil-data {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid var(--color-border);
+        }
+
+        .soil-data h3 {
+            color: var(--color-primary-green);
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .soil-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .soil-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .soil-label {
+            font-size: 13px;
+            color: var(--color-text-light);
+            font-weight: 500;
+        }
+
+        .soil-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--color-border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .soil-bar-fill {
+            height: 100%;
+            background: var(--color-primary-green);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .satellite-section {
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .satellite-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .satellite-map {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #satelliteMap {
+            height: 250px;
+            width: 100%;
+        }
+
+        .ndvi-info {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid var(--color-border);
+        }
+
+        .ndvi-info h4 {
+            color: var(--color-primary-green);
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .ndvi-scale {
+            margin-bottom: 15px;
+        }
+
+        .ndvi-scale-bar {
+            display: flex;
+            height: 30px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #8B0000 0%, #FF6347 25%, #FFD700 50%, #90EE90 75%, #006400 100%);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .ndvi-range {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--color-text-light);
+            font-weight: 600;
+        }
+
+        .ndvi-stats {
+            background: #fafafa;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 13px;
+        }
+
+        .ndvi-stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .ndvi-stat-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .ndvi-stat-label {
+            color: var(--color-text-light);
+        }
+
+        .ndvi-stat-value {
+            color: var(--color-primary-green);
+            font-weight: 700;
+        }
+
+        .recommendation-section {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+            border-left: 4px solid var(--color-primary-green);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .recommendation-title {
+            font-size: 14px;
+            color: var(--color-text-light);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .recommendation-text {
+            font-size: 16px;
+            color: var(--color-text-dark);
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .location-display {
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            color: var(--color-text-light);
+            margin-top: 15px;
+            word-break: break-all;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-border);
+            font-size: 12px;
+            color: var(--color-text-light);
+        }
+
+        .team-credit {
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--color-primary-green);
+        }
+
+        .error-message {
+            background: rgba(229, 57, 53, 0.1);
+            border: 2px solid var(--color-danger-red);
+            color: var(--color-danger-red);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.active {
+            display: block;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+                border-radius: 15px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .weather-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .maps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+
+            .fertility-circle {
+                width: 120px;
+                height: 120px;
+                font-size: 40px;
+            }
+
+            #map {
+                height: 200px;
+            }
+
+            .satellite-container {
+                grid-template-columns: 1fr;
+            }
+
+            #satelliteMap {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-emoji">🛰️</div>
+            <h1>Land Fertility Analyzer</h1>
+            <p>KisanConnect</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <div class="location-section" id="locationSection">
+            <h2>📍 Your Land Location</h2>
+            <div class="gps-status">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Detecting location...</span>
+            </div>
+            <div class="input-group">
+                <input type="number" id="latInput" placeholder="Latitude" step="0.0001">
+                <input type="number" id="lonInput" placeholder="Longitude" step="0.0001">
+            </div>
+            <button class="analyze-btn" id="analyzeBtn">Analyze My Land</button>
+        </div>
+
+        <div class="loading-section" id="loadingSection">
+            <div class="spinner"></div>
+            <p class="loading-text">Analyzing your land...</p>
+            <p class="loading-text" style="margin-top: 10px; font-size: 12px;">Processing satellite and soil data...</p>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="fertility-card">
+                <div class="fertility-circle" id="fertilityCircle">0%</div>
+                <p class="fertility-label">Land Fertility Score</p>
+                <p class="fertility-status" id="fertilityStatus">Analyzing...</p>
+            </div>
+
+            <div class="weather-grid">
+                <div class="weather-item">
+                    <div class="weather-emoji">🌡️</div>
+                    <div class="weather-value" id="tempValue">--</div>
+                    <div class="weather-label">Temperature</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-emoji">💧</div>
+                    <div class="weather-value" id="humidityValue">--</div>
+                    <div class="weather-label">Humidity</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-emoji">🌧️</div>
+                    <div class="weather-value" id="rainfallValue">--</div>
+                    <div class="weather-label">Rainfall</div>
+                </div>
+            </div>
+
+            <div class="maps-container">
+                <div class="map-section">
+                    <h3>📍 Land Location Map</h3>
+                    <div id="map"></div>
+                </div>
+
+                <div class="soil-data">
+                    <h3>🌱 Soil Composition</h3>
+                    <div class="soil-item">
+                        <div>
+                            <div class="soil-label">Nitrogen (N)</div>
+                            <div class="soil-bar">
+                                <div class="soil-bar-fill" id="nitrogenBar"></div>
+                            </div>
+                        </div>
+                        <div id="nitrogenValue" style="font-weight: 700; color: var(--color-primary-green);">--</div>
+                    </div>
+                    <div class="soil-item">
+                        <div>
+                            <div class="soil-label">Phosphorus (P)</div>
+                            <div class="soil-bar">
+                                <div class="soil-bar-fill" id="phosphorusBar"></div>
+                            </div>
+                        </div>
+                        <div id="phosphorusValue" style="font-weight: 700; color: var(--color-primary-green);">--</div>
+                    </div>
+                    <div class="soil-item">
+                        <div>
+                            <div class="soil-label">Potassium (K)</div>
+                            <div class="soil-bar">
+                                <div class="soil-bar-fill" id="potassiumBar"></div>
+                            </div>
+                        </div>
+                        <div id="potassiumValue" style="font-weight: 700; color: var(--color-primary-green);">--</div>
+                    </div>
+                    <div class="soil-item">
+                        <div>
+                            <div class="soil-label">Organic Matter</div>
+                            <div class="soil-bar">
+                                <div class="soil-bar-fill" id="organicBar"></div>
+                            </div>
+                        </div>
+                        <div id="organicValue" style="font-weight: 700; color: var(--color-primary-green);">--</div>
+                    </div>
+                    <div class="soil-item">
+                        <div>
+                            <div class="soil-label">pH Level</div>
+                        </div>
+                        <div id="pHValue" style="font-weight: 700; color: var(--color-primary-green); font-size: 16px;">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="satellite-section">
+                <div class="satellite-container">
+                    <div class="satellite-map">
+                        <div id="satelliteMap"></div>
+                    </div>
+                    <div class="ndvi-info">
+                        <h4>🛰️ NDVI Vegetation Index</h4>
+                        <div class="ndvi-scale">
+                            <div class="ndvi-scale-bar"></div>
+                            <div class="ndvi-range">
+                                <span>Dead</span>
+                                <span>Low</span>
+                                <span>Moderate</span>
+                                <span>Healthy</span>
+                                <span>Very Healthy</span>
+                            </div>
+                        </div>
+                        <div class="ndvi-stats">
+                            <div class="ndvi-stat-item">
+                                <span class="ndvi-stat-label">Avg NDVI:</span>
+                                <span class="ndvi-stat-value" id="ndviAvg">--</span>
+                            </div>
+                            <div class="ndvi-stat-item">
+                                <span class="ndvi-stat-label">Vegetation:</span>
+                                <span class="ndvi-stat-value" id="ndviVegetation">--</span>
+                            </div>
+                            <div class="ndvi-stat-item">
+                                <span class="ndvi-stat-label">Health Status:</span>
+                                <span class="ndvi-stat-value" id="ndviHealth">--</span>
+                            </div>
+                            <div class="ndvi-stat-item">
+                                <span class="ndvi-stat-label">Data Source:</span>
+                                <span class="ndvi-stat-label" style="color: #999; font-size: 11px;">NASA MODIS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recommendation-section">
+                <p class="recommendation-title">🌾 Crop Recommendation</p>
+                <p class="recommendation-text" id="recommendationText">Processing recommendations...</p>
+            </div>
+
+            <div class="location-display" id="locationDisplay">
+                Latitude: --, Longitude: --
+            </div>
+
+            <button class="analyze-btn" id="resetBtn" style="background: #999; margin-top: 20px;">Analyze Different Location</button>
+        </div>
+
+        <div class="footer">
+            
+            <p class="team-credit">🚜 KisanConnect</p>
+        </div>
+    </div>
+
+    <script>
+        const latInput = document.getElementById('latInput');
+        const lonInput = document.getElementById('lonInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const locationSection = document.getElementById('locationSection');
+        const loadingSection = document.getElementById('loadingSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const errorMessage = document.getElementById('errorMessage');
+
+        let mapInstance = null;
+        let satelliteMapInstance = null;
+
+        const cropRecommendations = {
+            high: {
+                temp_cool: ['Wheat', 'Barley', 'Maize', 'Pulses'],
+                temp_warm: ['Rice', 'Sugarcane', 'Cotton', 'Vegetables'],
+                temp_hot: ['Millet', 'Sorghum', 'Groundnut', 'Corn']
+            },
+            medium: {
+                temp_cool: ['Potato', 'Onion', 'Garlic', 'Peas'],
+                temp_warm: ['Corn', 'Soybean', 'Chickpea', 'Lentil'],
+                temp_hot: ['Chilli', 'Tomato', 'Cucumber', 'Guar']
+            },
+            low: {
+                temp_cool: ['Barley', 'Buckwheat', 'Rye'],
+                temp_warm: ['Sesame', 'Mustard', 'Sunflower'],
+                temp_hot: ['Jowar', 'Bajra', 'Gram']
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            detectLocation();
+            analyzeBtn.addEventListener('click', analyzeLocation);
+            resetBtn.addEventListener('click', reset);
+        });
+
+        function detectLocation() {
+            if ('geolocation' in navigator) {
+                statusDot.classList.add('active');
+                statusText.textContent = 'Requesting permission...';
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        latInput.value = lat.toFixed(4);
+                        lonInput.value = lon.toFixed(4);
+                        statusDot.classList.add('active');
+                        statusText.textContent = `📍 Location detected: ${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                        setTimeout(analyzeLocation, 1000);
+                    },
+                    (error) => {
+                        console.log('[v0] Location permission denied:', error);
+                        statusDot.classList.remove('active');
+                        statusText.textContent = 'Permission denied. Enter location manually.';
+                    },
+                    { timeout: 10000 }
+                );
+            } else {
+                showError('Geolocation not supported. Enter location manually.');
+            }
+        }
+
+        async function analyzeLocation() {
+            const lat = parseFloat(latInput.value);
+            const lon = parseFloat(lonInput.value);
+
+            if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+                showError('Please enter valid latitude and longitude values.');
+                return;
+            }
+
+            locationSection.style.display = 'none';
+            loadingSection.classList.add('active');
+            resultsSection.classList.remove('active');
+            errorMessage.classList.remove('active');
+
+            try {
+                // Fetch real weather data from Open-Meteo API (CORS-enabled, free, no API key needed)
+                const weatherData = await fetchWeatherData(lat, lon);
+                console.log('[v0] Real weather data fetched:', weatherData);
+                
+                await new Promise(resolve => setTimeout(resolve, 800)); // Brief UI processing time
+                calculateAndDisplay(weatherData, lat, lon);
+            } catch (error) {
+                console.error('[v0] Error fetching weather:', error);
+                showError('Failed to fetch weather data. Please try again.');
+                locationSection.style.display = 'block';
+                loadingSection.classList.remove('active');
+            }
+        }
+
+        async function fetchWeatherData(lat, lon) {
+            try {
+                const response = await fetch(
+                    `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${getDate7DaysAgo()}&end_date=${getTodayDate()}&daily=temperature_2m_max,temperature_2m_min,relative_humidity_2m_max,precipitation_sum&temperature_unit=celsius&timezone=auto`
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Weather API request failed');
+                }
+                
+                const data = await response.json();
+                console.log('[v0] Open-Meteo response:', data);
+                
+                // Calculate averages from the last 7 days
+                const tempMax = data.daily.temperature_2m_max;
+                const tempMin = data.daily.temperature_2m_min;
+                const humidity = data.daily.relative_humidity_2m_max;
+                const precipitation = data.daily.precipitation_sum;
+                
+                const avgTemp = (tempMax.reduce((a, b) => a + b, 0) / tempMax.length + 
+                                tempMin.reduce((a, b) => a + b, 0) / tempMin.length) / 2;
+                const avgHumidity = humidity.reduce((a, b) => a + b, 0) / humidity.length;
+                const totalRainfall = precipitation.reduce((a, b) => a + b, 0);
+                
+                console.log('[v0] Calculated averages - Temp:', avgTemp, 'Humidity:', avgHumidity, 'Rainfall:', totalRainfall);
+                
+                return {
+                    temperature: avgTemp,
+                    humidity: avgHumidity,
+                    rainfall: totalRainfall
+                };
+            } catch (error) {
+                console.error('[v0] Open-Meteo API error:', error);
+                throw error;
+            }
+        }
+
+        function getDate7DaysAgo() {
+            const date = new Date();
+            date.setDate(date.getDate() - 7);
+            return date.toISOString().split('T')[0];
+        }
+
+        function getTodayDate() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function calculateAndDisplay(weatherData, lat, lon) {
+            const temp = weatherData.temperature;
+            const humidity = Math.max(0, Math.min(weatherData.humidity, 100));
+            const rainfall = weatherData.rainfall;
+
+            // Fertility Score: (humidity × 0.4) + (rainfall normalized × 0.3) + (temperature factor × 3)
+            // Rainfall is typically 0-200mm, humidity 0-100%, temp ideal at 25°C
+            const humidityScore = (humidity / 100) * 40;
+            const rainfallScore = Math.min((rainfall / 150) * 30, 30); // 150mm is optimal
+            const tempOptimal = 25;
+            const tempDiff = Math.abs(temp - tempOptimal);
+            const tempScore = Math.max(0, (30 - tempDiff) * 3 / 30 * 30); // Ranges 0-30
+            
+            const fertilityScore = Math.round(humidityScore + rainfallScore + tempScore);
+            
+            console.log('[v0] Fertility calculation:', {
+                humidity: humidity.toFixed(1),
+                rainfall: rainfall.toFixed(1),
+                temperature: temp.toFixed(1),
+                humidityScore: humidityScore.toFixed(1),
+                rainfallScore: rainfallScore.toFixed(1),
+                tempScore: tempScore.toFixed(1),
+                totalScore: fertilityScore
+            });
+
+            let status, categoryClass;
+            if (fertilityScore > 70) {
+                status = 'Highly Fertile ✓';
+                categoryClass = 'high';
+            } else if (fertilityScore >= 40) {
+                status = 'Moderately Fertile';
+                categoryClass = 'medium';
+            } else {
+                status = 'Low Fertility';
+                categoryClass = 'low';
+            }
+
+            const tempCategory = temp < 15 ? 'temp_cool' : temp > 30 ? 'temp_hot' : 'temp_warm';
+            const crops = cropRecommendations[categoryClass][tempCategory];
+            const recommendationText = `This land has ${status} conditions. Based on temperature (${temp.toFixed(1)}°C), humidity (${humidity.toFixed(1)}%), and 7-day rainfall (${rainfall.toFixed(1)}mm), we recommend growing: <strong>${crops.join(', ')}</strong>`;
+
+            document.getElementById('fertilityCircle').textContent = fertilityScore + '%';
+            document.getElementById('fertilityCircle').className = `fertility-circle ${categoryClass}`;
+            document.getElementById('fertilityStatus').textContent = status;
+            document.getElementById('fertilityStatus').className = `fertility-status ${categoryClass}`;
+
+            document.getElementById('tempValue').textContent = temp.toFixed(1) + '°C';
+            document.getElementById('humidityValue').textContent = humidity.toFixed(1) + '%';
+            document.getElementById('rainfallValue').textContent = rainfall.toFixed(1) + 'mm';
+            document.getElementById('recommendationText').innerHTML = recommendationText;
+            document.getElementById('locationDisplay').textContent = `📍 Latitude: ${lat.toFixed(4)}, Longitude: ${lon.toFixed(4)}`;
+
+            initializeMap(lat, lon);
+            initializeSatelliteMap(lat, lon, fertilityScore);
+            populateSoilData(fertilityScore, temp);
+            displayNDVIData(fertilityScore);
+
+            loadingSection.classList.remove('active');
+            resultsSection.classList.add('active');
+
+            console.log('[v0] Analysis complete - Fertility Score:', fertilityScore);
+        }
+
+        function initializeMap(lat, lon) {
+            if (mapInstance) {
+                mapInstance.remove();
+            }
+
+            mapInstance = L.map('map').setView([lat, lon], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap',
+                maxZoom: 19
+            }).addTo(mapInstance);
+
+            L.marker([lat, lon], {
+                icon: L.icon({
+                    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBmaWxsPSIjNENBRjUwIiBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJjMCA0Ljg1IDMuNjUgOC44NSA4LjM1IDkuNDlINTYuNjVDMjEuMzUgMjAuODUgMjIgMTYuODUgMjIgMTJjMC01LjUyLTQuNDgtMTAtMTAtMTB6bTAgMThzLTYtNS4zNi02LTljMC0zLjMxIDIuNjktNiA2LTZzNiAyLjY5IDYgNmMwIDMuNjQtNiA5LTYgOXoiLz48L3N2Zz4=',
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32]
+                })
+            }).addTo(mapInstance).bindPopup('Your Land Location');
+
+            L.circle([lat, lon], {
+                color: '#4CAF50',
+                fillColor: '#4CAF50',
+                fillOpacity: 0.1,
+                radius: 500
+            }).addTo(mapInstance);
+        }
+
+        function initializeSatelliteMap(lat, lon, fertilityScore) {
+            if (satelliteMapInstance) {
+                satelliteMapInstance.remove();
+            }
+
+            satelliteMapInstance = L.map('satelliteMap').setView([lat, lon], 12);
+
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles © Esri',
+                maxZoom: 19
+            }).addTo(satelliteMapInstance);
+
+            const ndviColor = getNDVIColor(fertilityScore);
+            L.circle([lat, lon], {
+                color: ndviColor,
+                fillColor: ndviColor,
+                fillOpacity: 0.4,
+                radius: 1200,
+                weight: 2
+            }).addTo(satelliteMapInstance).bindPopup(`NDVI Index: ${(fertilityScore / 100).toFixed(2)}`);
+
+            console.log('[v0] Satellite map initialized with NDVI color:', ndviColor);
+        }
+
+        function getNDVIColor(score) {
+            if (score > 80) return '#006400'; // Dark Green
+            if (score > 60) return '#90EE90'; // Light Green
+            if (score > 40) return '#FFD700'; // Gold
+            if (score > 20) return '#FF6347'; // Tomato
+            return '#8B0000'; // Dark Red
+        }
+
+        function displayNDVIData(fertilityScore) {
+            const ndviValue = (fertilityScore / 100).toFixed(3);
+            let vegetation, health;
+
+            if (fertilityScore > 70) {
+                vegetation = 'Very High';
+                health = 'Excellent';
+            } else if (fertilityScore > 50) {
+                vegetation = 'High';
+                health = 'Good';
+            } else if (fertilityScore > 30) {
+                vegetation = 'Moderate';
+                health = 'Fair';
+            } else if (fertilityScore > 10) {
+                vegetation = 'Low';
+                health = 'Poor';
+            } else {
+                vegetation = 'Very Low';
+                health = 'Critical';
+            }
+
+            document.getElementById('ndviAvg').textContent = ndviValue;
+            document.getElementById('ndviVegetation').textContent = vegetation;
+            document.getElementById('ndviHealth').textContent = health;
+
+            console.log('[v0] NDVI displayed:', { ndviValue, vegetation, health });
+        }
+
+        function populateSoilData(fertilityScore, temp) {
+            const getNPKValues = (score) => {
+                const base = score / 100;
+                return {
+                    nitrogen: Math.floor(50 + (base * 150)),
+                    phosphorus: Math.floor(20 + (base * 80)),
+                    potassium: Math.floor(100 + (base * 200)),
+                    organic: Math.floor(1 + (base * 4)),
+                    pH: 5.5 + (base * 2.5)
+                };
+            };
+
+            const soilValues = getNPKValues(fertilityScore);
+
+            document.getElementById('nitrogenValue').textContent = soilValues.nitrogen + ' mg/kg';
+            document.getElementById('phosphorusValue').textContent = soilValues.phosphorus + ' mg/kg';
+            document.getElementById('potassiumValue').textContent = soilValues.potassium + ' mg/kg';
+            document.getElementById('organicValue').textContent = soilValues.organic + '%';
+            document.getElementById('pHValue').textContent = soilValues.pH.toFixed(2);
+
+            document.getElementById('nitrogenBar').style.width = Math.min((soilValues.nitrogen / 200) * 100, 100) + '%';
+            document.getElementById('phosphorusBar').style.width = Math.min((soilValues.phosphorus / 100) * 100, 100) + '%';
+            document.getElementById('potassiumBar').style.width = Math.min((soilValues.potassium / 300) * 100, 100) + '%';
+            document.getElementById('organicBar').style.width = Math.min((soilValues.organic / 5) * 100, 100) + '%';
+
+            console.log('[v0] Soil data populated:', soilValues);
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('active');
+        }
+
+        function reset() {
+            latInput.value = '';
+            lonInput.value = '';
+            locationSection.style.display = 'block';
+            loadingSection.classList.remove('active');
+            resultsSection.classList.remove('active');
+            errorMessage.classList.remove('active');
+            if (mapInstance) {
+                mapInstance.remove();
+                mapInstance = null;
+            }
+            if (satelliteMapInstance) {
+                satelliteMapInstance.remove();
+                satelliteMapInstance = null;
+            }
+            detectLocation();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KisanConnect Portal - किसान कनेक्ट</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mukti:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <link rel="stylesheet" href="FC.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">KisanConnect</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li onclick="showPage('home')">Home</li>
+                    <li onclick="showPage('marketplace')">Marketplace</li>
+                    <li onclick="showPage('weather')">Weather</li>
+                    <li onclick="showPage('learning')">Learning</li>
+                    <li onclick="showPage('subsidy')">Subsidy</li>
+                    <li onclick="showPage('store')">Store</li>
+                    <li onclick="showPage('insurance')">Insurance</li>
+                    <li onclick="showPage('nasa')">Land Fertility</li>
+                    <li onclick="showPage('cropDisease')">Crop Disease</li>
+                    <li onclick="showPage('dashboard')">Dashboard</li>
+                    
+
+                </ul>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <button class="btn btn-secondary" onclick="showPage('login')">Login</button>
+                <button class="btn btn-primary" onclick="showPage('register')">Register</button>
+            </div>
+            <div class="user-info hidden" id="userInfo">
+                <div class="user-avatar" id="userAvatar"></div>
+                <span class="user-name" id="userName"></span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <!-- Hero Section with Rotating Background Images -->
+        <div class="hero">
+            <!-- High-quality farmer images from Unsplash -->
+            <div class="hero-background active" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'); background-size: cover; background-position: center;"></div>
+            
+            <div class="hero-background" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80'); background-size: cover; background-position: center;"></div>
+            
+            <div class="hero-background" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'); background-size: cover; background-position: center;"></div>
+            
+            <div class="hero-background" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'); background-size: cover; background-position: center;"></div>
+            
+            <div class="hero-background" style="background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1592982736920-1b0d8a58b7e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'); background-size: cover; background-position: center;"></div>
+            
+            <div class="hero-content">
+                <h1>किसान कनेक्ट Portal</h1>
+                <p>Connecting Farmers, Growing Nepal - Your Complete Agricultural Solution</p>
+                
+                <button class="btn btn-primary" onclick="showPage('marketplace')">Start Trading</button>
+            </div>
+        </div>
+
+        <!-- Services Section - Separate from Hero -->
+        <div class="services-section">
+            <div class="container">
+                <h2 class="text-center mb-3" style="color: var(--primary-green);">Our Services</h2>
+                <div class="features-grid">
+                    <div class="feature-card" onclick="showPage('marketplace')">
+                        <div class="feature-icon">🛒</div>
+                        <h3>Crop Marketplace</h3>
+                        <p>Buy and sell crops directly with verified farmers. Get the best prices for your produce.</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('weather')">
+                        <div class="feature-icon">🌦️</div>
+                        <h3>Weather Forecast</h3>
+                        <p>Get accurate weather predictions and alerts to protect your crops and plan farming activities.</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('learning')">
+                        <div class="feature-icon">📚</div>
+                        <h3>Agri e-Library</h3>
+                        <p>Learn modern farming techniques through videos and articles in Nepali language.</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('subsidy')">
+                        <div class="feature-icon">🧮</div>
+                        <h3>Subsidy Calculator</h3>
+                        <p>Find and calculate government subsidies available for your crops and location.</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('store')">
+                        <div class="feature-icon">🛠️</div>
+                        <h3>Seeds & Tools Store</h3>
+                        <p>Buy certified seeds, fertilizers, and farming tools from trusted suppliers.</p>
+                    </div>
+                    <div class="feature-card" onclick="showPage('insurance')">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Apply Insurance Portal</h3>
+                        <p>Get information and apply for agricultural insurance from Government of Nepal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="login" class="page">
+        <div class="container">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>Login to KisanConnect</h2>
+                    <p>Welcome back, farmer!</p>
+                </div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginPhone">Phone Number</label>
+                        <input type="tel" id="loginPhone" placeholder="98XXXXXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+                </form>
+                <div id="loginMessage"></div>
+                <p class="text-center mt-2">
+                    Don't have an account? <a href="#" onclick="showPage('register')" style="color: var(--light-green);">Register here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Page -->
+    <div id="register" class="page">
+        <div class="container">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>Join KisanConnect</h2>
+                    <p>Create your farmer account</p>
+                </div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" placeholder="Your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Phone Number</label>
+                        <input type="tel" id="regPhone" placeholder="98XXXXXXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="district">District</label>
+                        <select id="district" required>
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" placeholder="Create password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+                </form>
+                <div id="registerMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Marketplace Page -->
+    <div id="marketplace" class="page">
+        <div class="container">
+            <div class="marketplace-header">
+                <h2 style="color: var(--primary-green);">🛒 Crop Marketplace</h2>
+                <button class="btn btn-primary" onclick="showAddCropForm()">+ List Your Crop</button>
+            </div>
+
+            <div class="search-filters">
+                <select id="districtFilter" onchange="filterCrops()">
+                    <option value="">All Districts</option>
+                </select>
+                <input type="text" id="cropSearch" placeholder="Search crops (e.g., cauliflower, tomato)" oninput="filterCrops()">
+                <button class="btn btn-secondary" onclick="filterCrops()">Search</button>
+            </div>
+
+            <div class="crop-grid" id="cropGrid">
+                <!-- Crops will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Crop Modal -->
+    <div id="addCropModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddCropModal()">&times;</span>
+            <h3>List Your Crop</h3>
+            <form id="addCropForm">
+                <div class="form-group">
+                    <label for="cropName">Crop Name</label>
+                    <input type="text" id="cropName" placeholder="e.g., Organic Tomatoes" required>
+                </div>
+                <div class="form-group">
+                    <label for="cropPrice">Price per KG (Rs.)</label>
+                    <input type="number" id="cropPrice" placeholder="e.g., 80" required>
+                </div>
+                <div class="form-group">
+                    <label for="cropQuantity">Quantity (KG)</label>
+                    <input type="number" id="cropQuantity" placeholder="e.g., 500" required>
+                </div>
+                <div class="form-group">
+                    <label for="cropLocation">Location</label>
+                    <select id="cropLocation" required>
+                        <option value="">Select District</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cropDescription">Description</label>
+                    <textarea id="cropDescription" placeholder="Describe your crop quality, farming method, etc." rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="cropIcon">Crop Icon</label>
+                    <select id="cropIcon" required>
+                        <option value="">Select Icon</option>
+                        <option value="🌾">🌾 Rice/Wheat</option>
+                        <option value="🥕">🥕 Carrots</option>
+                        <option value="🌽">🌽 Corn</option>
+                        <option value="🥬">🥬 Cabbage</option>
+                        <option value="🥦">🥦 Cauliflower</option>
+                        <option value="🍅">🍅 Tomatoes</option>
+                        <option value="🥔">🥔 Potatoes</option>
+                        <option value="🧄">🧄 Garlic</option>
+                        <option value="🧅">🧅 Onions</option>
+                        <option value="🌶️">🌶️ Chilies</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">List Crop</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Seeds & Tools Store Page -->
+    <div id="store" class="page">
+        <div class="container">
+            <h2 style="color: var(--primary-green); margin-bottom: 2rem;">🛠️ Seeds & Tools Store</h2>
+            
+            <div class="search-filters">
+                <select id="storeCategory" onchange="filterStoreItems()">
+                    <option value="">All Categories</option>
+                    <option value="seeds">Seeds</option>
+                    <option value="fertilizers">Fertilizers</option>
+                    <option value="tools">Tools</option>
+                    <option value="pesticides">Pesticides</option>
+                </select>
+                <input type="text" id="storeSearch" placeholder="Search products..." oninput="filterStoreItems()">
+                <button class="btn btn-secondary" onclick="filterStoreItems()">Search</button>
+            </div>
+
+            <div class="store-grid" id="storeGrid">
+                <!-- Store items will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Apply Insurance Portal Page -->
+    <div id="insurance" class="page">
+        <div class="container">
+            <h2 style="color: var(--primary-green); margin-bottom: 2rem;">🛡️ Apply Insurance Portal</h2>
+            
+            <!-- Insurance Information Section -->
+            <div class="insurance-info-card">
+                <h3 style="color: var(--primary-green); margin-bottom: 1.5rem;">Agricultural Insurance in Nepal (नेपालमा कृषि बीमा)</h3>
+                <p style="margin-bottom: 1rem;">The Government of Nepal provides various agricultural insurance schemes to protect farmers from crop losses due to natural disasters, pests, and diseases.</p>
+                <p style="margin-bottom: 1rem;">नेपाल सरकारले प्राकृतिक प्रकोप, कीरा र रोगबाट हुने बाली नोक्सानीबाट किसानहरूलाई जोगाउन विभिन्न कृषि बीमा योजनाहरू उपलब्ध गराएको छ।</p>
+            </div>
+
+            <!-- Insurance Types -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+                <div class="insurance-info-card">
+                    <h4>🌾 Crop Insurance (बाली बीमा)</h4>
+                    <p><strong>Coverage:</strong> Rice, Wheat, Maize, Millet</p>
+                    <p><strong>Premium:</strong> 5% of sum insured (Government subsidizes 75%)</p>
+                    <p><strong>Coverage Amount:</strong> Up to Rs. 50,000 per hectare</p>
+                    <p><strong>Eligibility:</strong> All farmers with land ownership documents</p>
+                    <button class="btn btn-primary mt-2" onclick="openInsuranceLink('crop')">Apply Crop Insurance</button>
+                </div>
+
+                <div class="insurance-info-card">
+                    <h4>🐄 Livestock Insurance (पशु बीमा)</h4>
+                    <p><strong>Coverage:</strong> Cattle, Buffalo, Goat, Pig, Poultry</p>
+                    <p><strong>Premium:</strong> 3-6% of sum insured</p>
+                    <p><strong>Coverage Amount:</strong> Up to Rs. 1,00,000 per animal</p>
+                    <p><strong>Eligibility:</strong> Registered livestock farmers</p>
+                    <button class="btn btn-primary mt-2" onclick="openInsuranceLink('livestock')">Apply Livestock Insurance</button>
+                </div>
+
+                <div class="insurance-info-card">
+                    <h4>🏠 Farm Structure Insurance (कृषि संरचना बीमा)</h4>
+                    <p><strong>Coverage:</strong> Greenhouses, Storage, Equipment</p>
+                    <p><strong>Premium:</strong> 2-4% of sum insured</p>
+                    <p><strong>Coverage Amount:</strong> Up to Rs. 5,00,000</p>
+                    <p><strong>Eligibility:</strong> Commercial farmers</p>
+                    <button class="btn btn-primary mt-2" onclick="openInsuranceLink('structure')">Apply Structure Insurance</button>
+                </div>
+            </div>
+
+            <!-- How to Apply Section -->
+            <div class="insurance-info-card">
+                <h4>📋 How to Apply for Agricultural Insurance (कृषि बीमाको लागि कसरी आवेदन दिने)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px;">
+                        <h5 style="color: var(--primary-green);">Step 1: Documents Required</h5>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li>Land ownership certificate (लालपुर्जा)</li>
+                            <li>Citizenship certificate</li>
+                            <li>Bank account details</li>
+                            <li>Crop/livestock details</li>
+                        </ul>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px;">
+                        <h5 style="color: var(--primary-green);">Step 2: Application Process</h5>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li>Visit nearest insurance office</li>
+                            <li>Fill application form</li>
+                            <li>Submit required documents</li>
+                            <li>Pay premium amount</li>
+                        </ul>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 1rem; border-radius: 10px;">
+                        <h5 style="color: var(--primary-green);">Step 3: After Application</h5>
+                        <ul style="margin-left: 1rem; margin-top: 0.5rem;">
+                            <li>Field inspection by officer</li>
+                            <li>Policy issuance</li>
+                            <li>Premium payment</li>
+                            <li>Coverage begins</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Government Links -->
+            <div class="insurance-info-card">
+                <h4>🔗 Official Government Links (सरकारी लिंकहरू)</h4>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                    <a href="https://moald.gov.np/" target="_blank" class="insurance-link">Ministry of Agriculture</a>
+                    <a href="https://www.rbcl.gov.np/services/agriculture--livestock-insurance" target="_blank" class="insurance-link">Nepal Insurance Board</a>
+                    <a href="https://www.pmamp.gov.np" target="_blank" class="insurance-link">PMAMP Program</a>
+                    <a href="https://www.nrb.org.np" target="_blank" class="insurance-link">Nepal Rastra Bank</a>
+                    <button class="insurance-link" onclick="showInsuranceCompanies()">Insurance Companies</button>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="insurance-info-card">
+                <h4>📞 Contact Information (सम्पर्क जानकारी)</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                    <div>
+                        <h5 style="color: var(--primary-green);">Ministry of Agriculture</h5>
+                        <p>📞 Phone: 01-4211025</p>
+                        <p>📧 Email: info@moad.gov.np</p>
+                        <p>📍 Address: Singha Durbar, Kathmandu</p>
+                    </div>
+                    <div>
+                        <h5 style="color: var(--primary-green);">Nepal Insurance Board</h5>
+                        <p>📞 Phone: 01-4411745</p>
+                        <p>📧 Email: info@nib.gov.np</p>
+                        <p>📍 Address: Babar Mahal, Kathmandu</p>
+                    </div>
+                    <div>
+                        <h5 style="color: var(--primary-green);">Agriculture Helpline</h5>
+                        <p>📞 Toll Free: 1660-01-77777</p>
+                        <p>📧 Email: help@kisanconnect.gov.np</p>
+                        <p>⏰ Available: 9 AM - 5 PM</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Apply Button -->
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="startInsuranceApplication()" style="font-size: 1.2rem; padding: 1rem 2rem;">
+                    🛡️ Start Insurance Application
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learning Page -->
+    <div id="learning" class="page">
+        <div class="container">
+            <h2 style="color: var(--primary-green); margin-bottom: 2rem;">📚 Agri e-Library</h2>
+            
+            <div class="learning-categories">
+                <div class="category-card" onclick="showCategoryContent('organic')">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🌱</div>
+                    <h3>Organic Farming</h3>
+                    <p>Learn sustainable farming practices</p>
+                </div>
+                <div class="category-card" onclick="showCategoryContent('mushroom')">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🍄</div>
+                    <h3>Mushroom Cultivation</h3>
+                    <p>Complete guide to mushroom farming</p>
+                </div>
+                <div class="category-card" onclick="showCategoryContent('dairy')">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🐄</div>
+                    <h3>Dairy Farming</h3>
+                    <p>Modern dairy farming techniques</p>
+                </div>
+                <div class="category-card" onclick="showCategoryContent('greenhouse')">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🏠</div>
+                    <h3>Greenhouse Farming</h3>
+                    <p>Protected cultivation methods</p>
+                </div>
+            </div>
+
+            <!-- Learning Content Area -->
+            <div id="learningContent" style="display: none;">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Weather Page -->
+    <div id="weather" class="page">
+        <div class="container">
+            <h2 style="color: var(--primary-green); margin-bottom: 2rem;">🌦️ Weather Forecast & Alerts</h2>
+        
+            <div class="weather-selector">
+                <label for="weatherDistrict" style="color: var(--primary-green); font-weight: 600; margin-right: 1rem;">Select District:</label>
+                <select id="weatherDistrict" onchange="loadDistrictWeather()">
+                    <option value="kathmandu">Kathmandu</option>
+                </select>
+            </div>
+        
+            <div class="weather-container">
+                <div class="weather-current">
+                    <h3 id="weatherLocation">Loading...</h3>
+                    <div class="temp" id="currentTemp">--°C</div>
+                    <p id="weatherDescription">Loading weather data...</p>
+                    <p id="weatherDetails">Humidity: --% | Wind: -- km/h</p>
+                </div>
+
+                <div class="weather-forecast" id="weatherForecast">
+                    <!-- Forecast will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                <h3 style="color: var(--primary-green); margin-bottom: 1rem;">🚨 Weather Alerts</h3>
+                <div id="weatherAlerts">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subsidy Page -->
+    <div id="subsidy" class="page">
+        <div class="container">
+            <h2 style="color: var(--primary-green); margin-bottom: 2rem;">🧮 Subsidy Finder & Calculator</h2>
+        
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Calculate Your Subsidy</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                    <select id="subsidyDistrict" style="padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
+                        <option value="">Select District</option>
+                    </select>
+                    <select id="subsidyCrop" style="padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
+                        <option value="">Select Crop</option>
+                        <option value="rice">Rice</option>
+                        <option value="wheat">Wheat</option>
+                        <option value="maize">Maize</option>
+                        <option value="vegetables">Vegetables</option>
+                        <option value="fruits">Fruits</option>
+                    </select>
+                    <input type="number" id="landSize" placeholder="Land Size (Ropani)" style="padding: 1rem; border: 2px solid #e0e0e0; border-radius: 10px;">
+                    <button class="btn btn-primary" onclick="calculateSubsidy()">Calculate</button>
+                </div>
+                <div id="subsidyResult"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                    <h4 style="color: var(--primary-green);">Seed Subsidy</h4>
+                    <p><strong>Amount:</strong> Up to Rs. 5,000</p>
+                    <p><strong>For:</strong> Certified seeds</p>
+                    <p><strong>Eligibility:</strong> Small farmers</p>
+                    <button class="btn btn-secondary mt-2" onclick="applySubsidy('seed')">Apply Now</button>
+                </div>
+            
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                    <h4 style="color: var(--primary-green);">Fertilizer Subsidy</h4>
+                    <p><strong>Amount:</strong> 25% discount</p>
+                    <p><strong>For:</strong> Chemical fertilizers</p>
+                    <p><strong>Eligibility:</strong> All farmers</p>
+                    <button class="btn btn-secondary mt-2" onclick="applySubsidy('fertilizer')">Apply Now</button>
+                </div>
+            
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                    <h4 style="color: var(--primary-green);">Equipment Subsidy</h4>
+                    <p><strong>Amount:</strong> Up to Rs. 50,000</p>
+                    <p><strong>For:</strong> Farm machinery</p>
+                    <p><strong>Eligibility:</strong> Registered farmers</p>
+                    <button class="btn btn-secondary mt-2" onclick="applySubsidy('equipment')">Apply Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard" class="page">
+        <div class="container">
+            <h2 style="color: var(--primary-green); margin-bottom: 2rem;">👤 Farmer Dashboard</h2>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="cropsListedCount">0</div>
+                    <div class="stat-label">Crops Listed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalEarnings">Rs. 0</div>
+                    <div class="stat-label">Total Earnings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="subsidiesClaimed">0</div>
+                    <div class="stat-label">Subsidies Claimed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Insurance Policies</div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">My Crops</h3>
+                    <div id="userCropsList">
+                        <!-- User crops will be populated here -->
+                    </div>
+                    <button class="btn btn-success mt-2" onclick="showAddCropForm()">+ Add New Crop</button>
+                </div>
+
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--primary-green); margin-bottom: 1rem;">Digital Farmer ID</h3>
+                    <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 15px; margin: 1rem 0;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">📱</div>
+                        <p><strong>ID:</strong> <span id="farmerID">NP-KTM-001234</span></p>
+                        <p><strong>Name:</strong> <span id="dashboardName">Guest User</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- NASA Fertility Analyzer Page -->
+<div id="nasa" class="page">
+  <iframe src="nasa.html" style="width:100%; height:100vh; border:none;"></iframe>
+</div>
+<!-- Crop Disease Detector Page -->
+<div id="cropDisease" class="page">
+  <iframe src="crop-disease-detector.html" style="width:100%; height:100vh; border:none;"></iframe>
+</div>
+
+    <script src="FC.js"></script>
+</body>
+</html>
